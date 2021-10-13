@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CRUD Firebase9</title>
+  <style>
+  label{display: inline-block; width: 80px;}
+  input,select{width: 200px;}
+  </style>
+
+</head>
+
+
+<body>
+  
+  <label>Id</label> <input type="text" id="Idbox"> <br><br>
+  <label>Nom</label> <input type="text" id="Nombox"> <br><br>
+  <label>Prénom</label> <input type="text" id="Prenombox"> <br><br>
+  <label>Genre</label>
+  <select id="Genbox">
+    <option value="Male">Homme</option>
+    <option value="Female">Femme</option>
+  </select>
+
+  <hr>
+
+  <button id="Insbtn">INSERT</button>
+  <button id="Selbtn">SELECT</button>
+  <button id="Updbtn">UPDATE</button>
+  <button id="Delbtn">DELETE</button>
+
+
+<!-- IMPORTS + CONFIGURATION -->
+
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.2/firebase-app.js";
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
+  
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyDYMGDopHP0jODPiotrogjWH4PpAdIXTvw",
+      authDomain: "crud-fire9.firebaseapp.com",
+      projectId: "crud-fire9",
+      storageBucket: "crud-fire9.appspot.com",
+      messagingSenderId: "901428310375",
+      appId: "1:901428310375:web:6cd196f39309d1881d7fc2"
+    };
+  
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+
+    import {getDatabase, ref, get, set, child, update, remove}
+    from "https://www.gstatic.com/firebasejs/9.1.2/firebase-database.js";
+
+    const db = getDatabase();
+
+
+    // ----------------- REFERENCES -----------------------------
+
+    var nombox = document.getElementById("Nombox");
+    var idbox = document.getElementById("Idbox");
+    var prenombox = document.getElementById("Prenombox");
+    var genrebox = document.getElementById("Genbox");
+
+    var insBtn = document.getElementById("Insbtn");
+    var selBtn = document.getElementById("Selbtn");
+    var updBtn = document.getElementById("Updbtn");
+    var delBtn = document.getElementById("Delbtn");
+
+    // -----------------INSERT DATA FUNCTION ------------------------
+
+    function InsertData () {
+      set(ref(db, "NosUtilisateurs/" + idbox.value), {
+        Id: idbox.value,
+        Nom: nombox.value,
+        Prenom: prenombox.value,
+        Genre: genrebox.value
+      })
+      .then (() => {
+        alert("data stored successfully!");
+      })
+      .catch((error) => {
+        alert("unsuccessful, error"+error);
+      });
+    }
+
+    // -----------------SELECT DATA FUNCTION -----------------------------
+
+    function SelectData() {
+      const dbref = ref(db);
+
+      get(child(dbref, "NosUtilisateurs/" + idbox.value)).then((snapshot) => {
+        if(snapshot.exists()) {
+          nombox.value = snapshot.val().Nom;
+          prenombox.value = snapshot.val().Prenom;
+          genrebox.value = snapshot.val().Genre;
+        } else {
+          alert("No data found");
+        }
+      })
+      .catch((error) => {
+        alert("unsuccessful, error"+error);
+      });
+
+    }
+
+    // -----------------UPDATE DATA FUNCTION -----------------------------
+
+    function UpdateData() {
+      update(ref(db, "NosUtilisateurs/" + idbox.value), {
+        Nom: nombox.value,
+        Prenom: prenombox.value,
+        Genre: genrebox.value
+      })
+      .then (() => {
+        alert("data updated successfully!");
+      })
+      .catch((error) => {
+        alert("unsuccessful, error"+error);
+      });
+    }
+    
+    // -----------------DELETE DATA FUNCTION -----------------------------
+
+    function DeleteData() {
+      remove(ref(db, "NosUtilisateurs/" + idbox.value))
+      .then (() => {
+        alert("data removed successfully!");
+      })
+      .catch((error) => {
+        alert("unsuccessful, error"+error);
+      });
+    }
+
+
+    // ------------------- ASSIGN EVENTS TO BTNS ----------------------
+
+    insBtn.addEventListener("click", InsertData);
+    selBtn.addEventListener("click", SelectData);
+    updBtn.addEventListener("click", UpdateData);
+    delBtn.addEventListener("click", DeleteData);
+
+
+  </script>
+
+</body>
+</html>
