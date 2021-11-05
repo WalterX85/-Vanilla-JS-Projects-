@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CRUD Cloud Firestore</title>
+  <style>label{display: inline-block; width: 80px}</style>
+</head>
+
+<body>
+  
+  <label>Id</label> <input type="text" id="Idbox"> <br><br>
+  <label>Nom</label> <input type="text" id="Nombox"> <br><br>
+  <label>Prénom</label> <input type="text" id="Prenombox"> <br><br>
+  <label>Genre</label>
+  <select id="Genrebox">
+    <option value="Male">Homme</option>
+    <option value="Female">Femme</option>
+  </select>
+
+  <hr>
+
+  <button id="Insbtn">INSERT</button>
+  <button id="Selbtn">SELECT</button>
+  <button id="Updbtn">UPDATE</button>
+  <button id="Delbtn">DELETE</button>
+
+
+  <script type="module">
+    // Import the functions you need from the SDKs you need  
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.3.0/firebase-app.js";  
+    // TODO: Add SDKs for Firebase products that you want to use  
+    // https://firebase.google.com/docs/web/setup#available-libraries    
+
+    // Your web app's Firebase configuration  
+    const firebaseConfig = {  
+      apiKey: "AIzaSyCiCEvGCKlJbAal1JfSqex9RPO2Y4at9_M",  
+      authDomain: "crud-firestore-67a7b.firebaseapp.com",  
+      projectId: "crud-firestore-67a7b",  
+      storageBucket: "crud-firestore-67a7b.appspot.com",  
+      messagingSenderId: "736297670533",  
+      appId: "1:736297670533:web:98f66dd3ade806c613d6ec"  
+    };
+    
+    // Initialize Firebase  
+    const app = initializeApp(firebaseConfig);
+
+    import {
+      getFirestore, doc, getDoc, setDoc, collection, addDoc, updateDoc, deleteDoc, deleteField
+    }
+    from "https://www.gstatic.com/firebasejs/9.3.0/firebase-firestore.js";
+
+    const db = getFirestore();
+
+    // -----------------------------------REFERENCES--------------------------
+
+    let id = document.getElementById("Idbox");
+    let nom = document.getElementById("Nombox");
+    let prenom = document.getElementById("Prenombox");
+    let genre = document.getElementById("Genrebox");
+
+    let insBtn = document.getElementById("Insbtn");
+    let selBtn = document.getElementById("Selbtn");
+    let updBtn = document.getElementById("Updbtn");
+    let delBtn = document.getElementById("Delbtn");
+
+    // ------------------------------ADDING DOCUMENT----------------------------------------------------------------
+    // Auto Id
+
+    async function AddDocument_AutoID() {
+      const ref = collection(db, "Users");
+
+      const docRef = await addDoc(
+        ref, {
+          Id: id.value,
+          Nom: nom.value,
+          Prenom: prenom.value,
+          Genre: genre.value
+        }
+      )
+      .then (() => {
+        alert("data added successfully");
+      })
+      .catch ((error) => {
+        alert("Unsuccessfully operation, error: " + error);
+      });
+    }
+
+    // Custom ID
+
+    async function AddDocument_CustomID() {
+      const ref = doc(db, "Users", Idbox.value);
+
+      await setDoc(
+        ref, {
+          Id: id.value,
+          Nom: nom.value,
+          Prenom: prenom.value,
+          Genre: genre.value
+        }
+      )
+      .then (() => {
+        alert("data added successfully");
+      })
+      .catch ((error) => {
+        alert("Unsuccessfully operation, error: " + error);
+      });
+    }
+
+    // --------------------------------GETTING DOCUMENT------------------------------
+
+    async function GetADocument() {
+      const ref = doc(db, "Users", Idbox.value);
+      const docSnap = await getDoc(ref);
+      
+      if(docSnap.exists()) {
+        nom.value = docSnap.data().Nom;
+        prenom.value = docSnap.data().Prenom;
+        genre.value = docSnap.data().Genre;
+      } else {
+        alert("No such document");
+      }
+    }
+
+    // --------------------------------UPDATING DOCUMENT----------------------------
+
+    async function UpdateFieldsInADocument() {
+      const ref = doc(db, "Users", Idbox.value);
+
+      await updateDoc(
+        ref, {
+          Nom: nom.value,
+          Prenom: prenom.value,
+          Genre: genre.value
+        }
+      )
+      .then (() => {
+        alert("data updated successfully");
+      })
+      .catch ((error) => {
+        alert("Unsuccessfully operation, error: " + error);
+      });
+    }
+
+    // ---------------------------------DELETING DOCUMENT---------------------------------
+
+    async function DeleteDocument() {
+      const ref = doc(db, "Users", Idbox.value);
+      const docSnap = await getDoc(ref);
+
+      if(!docSnap.exists()) {
+        alert("Document does not exist");
+        return;
+      }
+      await deleteDoc(ref)
+      .then (() => {
+        alert("data deleted successfully");
+      })
+      .catch ((error) => {
+        alert("Unsuccessfully operation, error: " + error);
+      });
+    }
+    
+
+    // -----------------------------ASSIGN EVENTS TO BTNS----------------------------
+
+    // Auto Id ou Custom Id, au choix!
+    
+    //insBtn.addEventListener("click", AddDocument_AutoID);
+    insBtn.addEventListener("click", AddDocument_CustomID);
+
+    selBtn.addEventListener("click", GetADocument);
+
+    updBtn.addEventListener("click", UpdateFieldsInADocument);
+    
+    delBtn.addEventListener("click", DeleteDocument);
+
+
+
+
+
+  </script>
+
+
+
+
+</body>
+</html>
