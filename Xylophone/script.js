@@ -5,16 +5,15 @@ window.addEventListener('keydown', (e) => {
   // console.log(e.key);
   const notes = document.querySelector(`audio[data-key="${e.key}"]`)
   // console.log(notes);
-  const animDo = document.querySelector(".do");
-
+  const animation = document.querySelector(`[data-key="${e.key}"]`)
 
 
   if (!notes) return
   
   
-  animDo.classList.add("touch")
+  animation.classList.add("touch")
   setTimeout(() => {
-    animDo.classList.remove("touch")}, 300
+    animation.classList.remove("touch")}, 300
   )
 
   
